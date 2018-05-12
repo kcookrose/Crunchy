@@ -9,3 +9,14 @@ C:\Users\katco\Documents\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.Assembly
 C:\Users\katco\Documents\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.AssemblyInfo.cs
 C:\Users\katco\Documents\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.dll
 C:\Users\katco\Documents\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.pdb
+D:\GitHub\Crunchy\bin\Debug\netcoreapp2.0\Crunchy.deps.json
+D:\GitHub\Crunchy\bin\Debug\netcoreapp2.0\Crunchy.runtimeconfig.json
+D:\GitHub\Crunchy\bin\Debug\netcoreapp2.0\Crunchy.runtimeconfig.dev.json
+D:\GitHub\Crunchy\bin\Debug\netcoreapp2.0\Crunchy.dll
+D:\GitHub\Crunchy\bin\Debug\netcoreapp2.0\Crunchy.pdb
+D:\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.csprojResolveAssemblyReference.cache
+D:\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.csproj.CoreCompileInputs.cache
+D:\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.AssemblyInfoInputs.cache
+D:\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.AssemblyInfo.cs
+D:\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.dll
+D:\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.pdb

@@ -11,7 +11,7 @@ using System;
 namespace Crunchy.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    [Migration("20180512220125_InitialCreate")]
+    [Migration("20180512231334_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,11 +25,15 @@ namespace Crunchy.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<long?>("ProjectItemPid");
+
                     b.Property<string>("RepoUrl");
 
                     b.Property<long?>("TodoItemTid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectItemPid");
 
                     b.HasIndex("TodoItemTid");
 
@@ -45,6 +49,8 @@ namespace Crunchy.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("Tags");
+
                     b.HasKey("Pid");
 
                     b.ToTable("ProjectItems");
@@ -55,9 +61,15 @@ namespace Crunchy.Migrations
                     b.Property<long>("Sid")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Color");
+
                     b.Property<string>("Name");
 
+                    b.Property<long?>("ProjectItemPid");
+
                     b.HasKey("Sid");
+
+                    b.HasIndex("ProjectItemPid");
 
                     b.ToTable("StatusItems");
                 });
@@ -110,9 +122,20 @@ namespace Crunchy.Migrations
 
             modelBuilder.Entity("Crunchy.Models.FileRef", b =>
                 {
+                    b.HasOne("Crunchy.Models.ProjectItem")
+                        .WithMany("Files")
+                        .HasForeignKey("ProjectItemPid");
+
                     b.HasOne("Crunchy.Models.TodoItem")
                         .WithMany("Files")
                         .HasForeignKey("TodoItemTid");
+                });
+
+            modelBuilder.Entity("Crunchy.Models.StatusItem", b =>
+                {
+                    b.HasOne("Crunchy.Models.ProjectItem")
+                        .WithMany("ValidStatuses")
+                        .HasForeignKey("ProjectItemPid");
                 });
 
             modelBuilder.Entity("Crunchy.Models.TodoItem", b =>

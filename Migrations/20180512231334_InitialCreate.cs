@@ -15,7 +15,8 @@ namespace Crunchy.Migrations
                     Pid = table.Column<long>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Description = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: true),
+                    Tags = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -28,11 +29,19 @@ namespace Crunchy.Migrations
                 {
                     Sid = table.Column<long>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true)
+                    Color = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    ProjectItemPid = table.Column<long>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StatusItems", x => x.Sid);
+                    table.ForeignKey(
+                        name: "FK_StatusItems_ProjectItems_ProjectItemPid",
+                        column: x => x.ProjectItemPid,
+                        principalTable: "ProjectItems",
+                        principalColumn: "Pid",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,12 +107,19 @@ namespace Crunchy.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    ProjectItemPid = table.Column<long>(nullable: true),
                     RepoUrl = table.Column<string>(nullable: true),
                     TodoItemTid = table.Column<long>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FileRef", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FileRef_ProjectItems_ProjectItemPid",
+                        column: x => x.ProjectItemPid,
+                        principalTable: "ProjectItems",
+                        principalColumn: "Pid",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_FileRef_TodoItems_TodoItemTid",
                         column: x => x.TodoItemTid,
@@ -113,9 +129,19 @@ namespace Crunchy.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_FileRef_ProjectItemPid",
+                table: "FileRef",
+                column: "ProjectItemPid");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FileRef_TodoItemTid",
                 table: "FileRef",
                 column: "TodoItemTid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StatusItems_ProjectItemPid",
+                table: "StatusItems",
+                column: "ProjectItemPid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TodoItems_AssigneeUid",

@@ -22,11 +22,27 @@ namespace Crunchy.Controllers {
                 _context.TodoItems.Add(initItem);
                 _context.SaveChanges();
             }
+
+            if (_context.ProjectItems.Count() == 0) {
+                var initProject = new ProjectItem();
+                initProject.Name = "Test Project";
+                initProject.Tags = "test;demo;ignore;";
+                initProject.Description = "A Test Project";
+                initProject.Files.Add(new FileRef { RepoUrl = "anotherTest/file.png"});
+                _context.ProjectItems.Add(initProject);
+                _context.SaveChanges();
+            }
         }
 
         [HttpGet]
         public List<TodoItem> GetAll() {
             return _context.TodoItems.ToList();
+        }
+
+
+        [HttpGet("projects", Name = "GetProjects")]
+        public List<ProjectItem> GetAllProjects() {
+            return _context.ProjectItems.ToList();
         }
 
 
