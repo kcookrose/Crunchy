@@ -16,6 +16,7 @@ namespace Crunchy.Models {
         /// <summary>
         /// Short description of the project.
         /// </summary>
+        [Required]
         public string Name { get; set; }
 
 
@@ -27,13 +28,14 @@ namespace Crunchy.Models {
 
         /// <summary>
         /// The set of statuses that may be applied to todo items assigned to
-        /// this project.
+        /// this project. If empty, all statuses should be assumed valid.
         /// </summary>
         public IList<StatusItem> ValidStatuses { get; set; }
 
 
         /// <summary>
-        /// The set of users with visibility to the project.
+        /// The set of users with visibility to the project. If empty,
+        /// all users are assumed to have visibility.
         /// </summary>
         public IList<UserItem> OwnerUsers { get; set; }
 
