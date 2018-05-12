@@ -1,0 +1,11 @@
+C:\Users\katco\Documents\GitHub\Crunchy\bin\Debug\netcoreapp2.0\Crunchy.deps.json
+C:\Users\katco\Documents\GitHub\Crunchy\bin\Debug\netcoreapp2.0\Crunchy.runtimeconfig.json
+C:\Users\katco\Documents\GitHub\Crunchy\bin\Debug\netcoreapp2.0\Crunchy.runtimeconfig.dev.json
+C:\Users\katco\Documents\GitHub\Crunchy\bin\Debug\netcoreapp2.0\Crunchy.dll
+C:\Users\katco\Documents\GitHub\Crunchy\bin\Debug\netcoreapp2.0\Crunchy.pdb
+C:\Users\katco\Documents\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.csprojAssemblyReference.cache
+C:\Users\katco\Documents\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.csproj.CoreCompileInputs.cache
+C:\Users\katco\Documents\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.AssemblyInfoInputs.cache
+C:\Users\katco\Documents\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.AssemblyInfo.cs
+C:\Users\katco\Documents\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.dll
+C:\Users\katco\Documents\GitHub\Crunchy\obj\Debug\netcoreapp2.0\Crunchy.pdb
