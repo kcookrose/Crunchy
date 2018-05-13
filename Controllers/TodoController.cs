@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using Crunchy.Models;
@@ -6,32 +7,22 @@ using Crunchy.Models;
 
 namespace Crunchy.Controllers {
 
-    [Route("api/[controller]")]
+//    [Route("api/[controller]")]
+    [Route("api")]
     public class TodoController : ControllerBase {
         
+
         private readonly TodoContext _context;
 
         public TodoController(TodoContext context) {
             _context = context;
 
-            if (_context.TodoItems.Count() == 0) {
-                var initItem = new TodoItem();
-                initItem.Name = "Init Item";
-                initItem.Files = new List<FileRef>();
-                initItem.Files.Add(new FileRef { RepoUrl = "test/file.jpg" });
-                _context.TodoItems.Add(initItem);
-                _context.SaveChanges();
-            }
+            if (_context.Users.Count() == 0) DevSeedUser();
 
-            if (_context.ProjectItems.Count() == 0) {
-                var initProject = new ProjectItem();
-                initProject.Name = "Test Project";
-                initProject.Tags = "test;demo;ignore;";
-                initProject.Description = "A Test Project";
-                initProject.Files.Add(new FileRef { RepoUrl = "anotherTest/file.png"});
-                _context.ProjectItems.Add(initProject);
-                _context.SaveChanges();
-            }
+            if (_context.Projects.Count() == 0) DevSeedProject();
+
+            if (_context.TodoItems.Count() == 0) DevSeedTodoItem();
+
         }
 
         [HttpGet]
@@ -41,9 +32,22 @@ namespace Crunchy.Controllers {
 
 
         [HttpGet("projects", Name = "GetProjects")]
-        public List<ProjectItem> GetAllProjects() {
-            return _context.ProjectItems.ToList();
+        public List<Project> GetAllProjects() {
+            return _context.Projects.ToList();
         }
+
+
+        /* WIP
+        [HttpGet("projects/{id}")]
+        public IActionResult GetProject(long id) {
+            var project = _context.ProjectItems
+                .Include(proj => proj.Files)
+                .ToList()
+                .Find(id);
+            if (project == null || project.Pid != id) return NotFound();
+
+        }
+        */
 
 
         [HttpGet("{Tid}", Name = "GetTodo")]
@@ -56,6 +60,55 @@ namespace Crunchy.Controllers {
         }
 
 
+        /// <summary>
+        /// [Dev] Seed the Todo table with an item.
+        /// </summary>
+        public void DevSeedTodoItem() {
+            var newFile = new FileRef("test/file.jpg");
+/*             _context.Files.Add(newFile);
+            _context.SaveChanges();
+ */
+            var project = _context.Projects.FirstOrDefault();
+            if (project == null) {
+                System.Console.WriteLine(" !!! Tried to create Todo without project");
+                return;
+            }
+            var initItem = new TodoItem(project);
+            initItem.Name = "Init Item";
+            initItem.Project = _context.Projects.FirstOrDefault();
+            _context.TodoItems.Add(initItem);
+            _context.SaveChanges();
+
+            initItem.Files.Add(newFile);
+            _context.SaveChanges();
+        }
+
+
+        /// <summary>
+        /// [Dev] Seed the Project table with an item.
+        /// </summary>
+        public void DevSeedProject() {
+            var newFile = new FileRef("anotherTest/file.png");
+
+            var initProject = new Project();
+            initProject.Name = "Test Project";
+            initProject.Tags = "test;demo;ignore;";
+            initProject.Description = "A Test Project";
+            //initProject.Files.Add(newFile);
+            _context.Projects.Add(initProject);
+            _context.SaveChanges();
+        }
+
+
+        /// <summary>
+        /// [Dev] Seed the users table with an item.
+        /// </summary>
+        public void DevSeedUser() {
+            var newUser = new User();
+            newUser.Name = "Dev Test User";
+            _context.Users.Add(newUser);
+            _context.SaveChanges();
+        }
     }
 }
 

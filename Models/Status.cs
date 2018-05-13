@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Crunchy.Models
 {
-    public class StatusItem {
+    public class Status {
 
         /// <summary>
         /// Unique ID for the status.
@@ -17,6 +17,7 @@ namespace Crunchy.Models
         /// <summary>
         /// Name of the status.
         /// </summary>
+        [Required]
         public string Name { get; set; }
 
 

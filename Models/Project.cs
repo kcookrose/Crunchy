@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crunchy.Models {
-    public class ProjectItem {
+    public class Project {
 
         /// <summary>
         /// Unique ID for the project.
@@ -30,14 +30,14 @@ namespace Crunchy.Models {
         /// The set of statuses that may be applied to todo items assigned to
         /// this project. If empty, all statuses should be assumed valid.
         /// </summary>
-        public IList<StatusItem> ValidStatuses { get; set; }
+        public IList<Status> ValidStatuses { get; set; }
 
 
         /// <summary>
         /// The set of users with visibility to the project. If empty,
         /// all users are assumed to have visibility.
         /// </summary>
-        public IList<UserItem> OwnerUsers { get; set; }
+        public IList<User> OwnerUsers { get; set; }
 
 
         /// <summary>
@@ -49,13 +49,17 @@ namespace Crunchy.Models {
         /// <summary>
         /// Files associated with the project.
         /// </summary>
-        public IList<FileRef> Files { get; set; }
+        //public IList<FileRef> Files { get; set; }
 
 
-        public ProjectItem() {
-            ValidStatuses = new List<StatusItem>();
-            OwnerUsers = new List<UserItem>();
-            Files = new List<FileRef>();
+        public Project() {
+            ValidStatuses = new List<Status>();
+            OwnerUsers = new List<User>();
+            //Files = new List<FileRef>();
+        }
+
+        public static void OnModelCreating(TodoContext context, ModelBuilder builder) {
+            //builder.Entity<Project>().HasMany(prj => prj.OwnerUsers).WithMany();
         }
         
     }
