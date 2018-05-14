@@ -49,17 +49,17 @@ namespace Crunchy.Models {
         /// <summary>
         /// Files associated with the project.
         /// </summary>
-        //public IList<FileRef> Files { get; set; }
+        public IList<FileRef> Files { get; set; }
 
 
         public Project() {
             ValidStatuses = new List<Status>();
             OwnerUsers = new List<User>();
-            //Files = new List<FileRef>();
+            Files = new List<FileRef>();
         }
 
         public static void OnModelCreating(TodoContext context, ModelBuilder builder) {
-            //builder.Entity<Project>().HasMany(prj => prj.OwnerUsers).WithMany();
+            builder.Entity<Project>().HasMany(prj => prj.Files).WithOne();
         }
         
     }

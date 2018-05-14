@@ -32,10 +32,6 @@ namespace Crunchy.Controllers {
         public IActionResult GetProject(long id) {
             var project = _context.Projects.Find(id);
             if (project != null) {
-/*                 _context.Entry(project)
-                    .Collection(proj => proj.OwnerUsers)
-                    .Load();
- */
                 foreach (var coll in _context.Entry(project).Collections)
                     coll.Load();
                 return Ok(project);

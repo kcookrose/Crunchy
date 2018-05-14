@@ -70,6 +70,7 @@ namespace Crunchy.Controllers {
             initProject.Description = "A Test Project";
             foreach (var status in _context.Statuses)
                 initProject.ValidStatuses.Add(status);
+            initProject.Files.Add(newFile);
             _context.Projects.Add(initProject);
             _context.SaveChanges();
         }
