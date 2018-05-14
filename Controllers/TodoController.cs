@@ -24,31 +24,12 @@ namespace Crunchy.Controllers {
 
         }
 
-        [HttpGet("projects", Name = "GetProjects")]
-        public List<Project> GetAllProjects() {
-            return _context.Projects.ToList();
-        }
-
-
-        /* WIP
-        [HttpGet("projects/{id}")]
-        public IActionResult GetProject(long id) {
-            var project = _context.ProjectItems
-                .Include(proj => proj.Files)
-                .ToList()
-                .Find(id);
-            if (project == null || project.Pid != id) return NotFound();
-
-        }
-        */
-
-
         /// <summary>
-        /// [Dev] Seed the Status table with a status
+        /// [Dev] Seed the Status table with statuses
         /// </summary>
         public void DevSeedStatuses() {
-            var newStatus = new Status("WIP");
-            _context.Statuses.Add(newStatus);
+            foreach (var newStatus in new string []{"TODO", "In Progress", "Complete"})
+                _context.Statuses.Add(new Status(newStatus));
             _context.SaveChanges();
         }
 
@@ -87,7 +68,8 @@ namespace Crunchy.Controllers {
             initProject.Name = "Test Project";
             initProject.Tags = "test;demo;ignore;";
             initProject.Description = "A Test Project";
-            //initProject.Files.Add(newFile);
+            foreach (var status in _context.Statuses)
+                initProject.ValidStatuses.Add(status);
             _context.Projects.Add(initProject);
             _context.SaveChanges();
         }
