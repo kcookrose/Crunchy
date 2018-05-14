@@ -26,6 +26,12 @@ namespace Crunchy.Models
         /// i.e. #FF00FF for purple.
         /// </summary>
         public string Color { get; set; }
+
+        public Status() { }
+
+        public Status(string name) {
+            Name = name;
+        }
     }
 
 }
