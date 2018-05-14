@@ -8,13 +8,10 @@ namespace Crunchy.Models {
 
         public DbSet<User> Users { get; set; }
 
-        public DbSet<Status> Statuses { get; set; }
-
         public DbSet<Project> Projects { get; set; }
 
-//        public DbSet<FileRef> Files { get; set; }
+        public DbSet<StatusSet> StatusSets { get; set; }
  
-        // Constructor 
         public TodoContext(DbContextOptions<TodoContext> options) : base(options) {
         }
 
@@ -25,6 +22,7 @@ namespace Crunchy.Models {
         protected override void OnModelCreating(ModelBuilder builder) {
             TodoItem.OnModelCreating(this, builder);
             FileRef.OnModelCreating(this, builder);
+            StatusSet.OnModelCreating(this, builder);
         }
     }
 

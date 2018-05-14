@@ -34,6 +34,8 @@ namespace Crunchy.Controllers {
             if (project != null) {
                 foreach (var coll in _context.Entry(project).Collections)
                     coll.Load();
+                foreach (var elem in _context.Entry(project).Navigations)
+                    elem.Load();
                 return Ok(project);
             }
             return NotFound();

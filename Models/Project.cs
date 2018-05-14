@@ -30,7 +30,7 @@ namespace Crunchy.Models {
         /// The set of statuses that may be applied to todo items assigned to
         /// this project. If empty, all statuses should be assumed valid.
         /// </summary>
-        public IList<Status> ValidStatuses { get; set; }
+        public StatusSet ValidStatuses { get; set; }
 
 
         /// <summary>
@@ -53,7 +53,6 @@ namespace Crunchy.Models {
 
 
         public Project() {
-            ValidStatuses = new List<Status>();
             OwnerUsers = new List<User>();
             Files = new List<FileRef>();
         }

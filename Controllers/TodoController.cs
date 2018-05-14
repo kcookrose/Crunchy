@@ -7,7 +7,6 @@ using Crunchy.Models;
 
 namespace Crunchy.Controllers {
 
-//    [Route("api/[controller]")]
     [Route("api")]
     public partial class TodoController : ControllerBase {
         
@@ -17,7 +16,7 @@ namespace Crunchy.Controllers {
         public TodoController(TodoContext context) {
             _context = context;
 
-            if (_context.Statuses.Count() == 0) DevSeedStatuses();
+            if (_context.StatusSets.Count() == 0) DevSeedStatuses();
             if (_context.Users.Count() == 0) DevSeedUser();
             if (_context.Projects.Count() == 0) DevSeedProject();
             if (_context.TodoItems.Count() == 0) DevSeedTodoItem();
@@ -28,8 +27,10 @@ namespace Crunchy.Controllers {
         /// [Dev] Seed the Status table with statuses
         /// </summary>
         public void DevSeedStatuses() {
+            var newStatusSet = new StatusSet("Test Status Set");
             foreach (var newStatus in new string []{"TODO", "In Progress", "Complete"})
-                _context.Statuses.Add(new Status(newStatus));
+                newStatusSet.Add(newStatus);
+            _context.StatusSets.Add(newStatusSet);
             _context.SaveChanges();
         }
 
@@ -41,14 +42,14 @@ namespace Crunchy.Controllers {
             var newFile = new FileRef("test/file.jpg");
 
             var user = _context.Users.FirstOrDefault();
-            var status = _context.Statuses.FirstOrDefault();
+            var statusSet = _context.StatusSets.FirstOrDefault();
 
             var project = _context.Projects.FirstOrDefault();
             if (project == null) {
                 System.Console.WriteLine(" !!! Tried to create Todo without project");
                 return;
             }
-            var initItem = new TodoItem(project, status);
+            var initItem = new TodoItem(project, project.ValidStatuses.Statuses[0]);
             initItem.Name = "Init Item";
             initItem.Project = _context.Projects.FirstOrDefault();
             initItem.Files.Add(newFile);
@@ -68,9 +69,8 @@ namespace Crunchy.Controllers {
             initProject.Name = "Test Project";
             initProject.Tags = "test;demo;ignore;";
             initProject.Description = "A Test Project";
-            foreach (var status in _context.Statuses)
-                initProject.ValidStatuses.Add(status);
             initProject.Files.Add(newFile);
+            initProject.ValidStatuses = _context.StatusSets.FirstOrDefault();
             _context.Projects.Add(initProject);
             _context.SaveChanges();
         }
