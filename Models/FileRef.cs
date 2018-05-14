@@ -8,6 +8,7 @@ namespace Crunchy.Models {
         /// <summary>
         /// Unique ID for the file ref.
         /// </summary>
+        [Key]
         public long Id { get; set; }
 
 
