@@ -41,7 +41,7 @@ namespace Crunchy.Models {
         /// <summary>
         /// The estimated time required to complete the task.
         /// </summary>
-        public TimeSpan EstimatedTime { get; set; }
+        public TimeSpan? EstimatedTime { get; set; }
 
 
         /// <summary>
@@ -66,6 +66,7 @@ namespace Crunchy.Models {
         /// <summary>
         /// The current status of the task.
         /// </summary>
+        [Required]
         public Status Status { get; set; }
 
 
@@ -78,9 +79,10 @@ namespace Crunchy.Models {
         public TodoItem() { }
 
 
-        public TodoItem(Project project) {
+        public TodoItem(Project project, Status status) {
             Files = new List<FileRef>();
             Project = project;
+            Status = status;
         }
 
 

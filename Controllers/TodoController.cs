@@ -9,7 +9,7 @@ namespace Crunchy.Controllers {
 
 //    [Route("api/[controller]")]
     [Route("api")]
-    public class TodoController : ControllerBase {
+    public partial class TodoController : ControllerBase {
         
 
         private readonly TodoContext _context;
@@ -17,19 +17,12 @@ namespace Crunchy.Controllers {
         public TodoController(TodoContext context) {
             _context = context;
 
+            if (_context.Statuses.Count() == 0) DevSeedStatuses();
             if (_context.Users.Count() == 0) DevSeedUser();
-
             if (_context.Projects.Count() == 0) DevSeedProject();
-
             if (_context.TodoItems.Count() == 0) DevSeedTodoItem();
 
         }
-
-        [HttpGet]
-        public List<TodoItem> GetAll() {
-            return _context.TodoItems.ToList();
-        }
-
 
         [HttpGet("projects", Name = "GetProjects")]
         public List<Project> GetAllProjects() {
@@ -50,13 +43,13 @@ namespace Crunchy.Controllers {
         */
 
 
-        [HttpGet("{Tid}", Name = "GetTodo")]
-        public IActionResult GetById(long Tid) {
-            var item = _context.TodoItems.Find(Tid);
-            if (item == null) {
-                return NotFound();
-            }
-            return Ok(item);
+        /// <summary>
+        /// [Dev] Seed the Status table with a status
+        /// </summary>
+        public void DevSeedStatuses() {
+            var newStatus = new Status("WIP");
+            _context.Statuses.Add(newStatus);
+            _context.SaveChanges();
         }
 
 
@@ -65,21 +58,21 @@ namespace Crunchy.Controllers {
         /// </summary>
         public void DevSeedTodoItem() {
             var newFile = new FileRef("test/file.jpg");
-/*             _context.Files.Add(newFile);
-            _context.SaveChanges();
- */
+
+            var user = _context.Users.FirstOrDefault();
+            var status = _context.Statuses.FirstOrDefault();
+
             var project = _context.Projects.FirstOrDefault();
             if (project == null) {
                 System.Console.WriteLine(" !!! Tried to create Todo without project");
                 return;
             }
-            var initItem = new TodoItem(project);
+            var initItem = new TodoItem(project, status);
             initItem.Name = "Init Item";
             initItem.Project = _context.Projects.FirstOrDefault();
-            _context.TodoItems.Add(initItem);
-            _context.SaveChanges();
-
             initItem.Files.Add(newFile);
+            if (user != null) initItem.Assignee = user;
+            _context.TodoItems.Add(initItem);
             _context.SaveChanges();
         }
 
