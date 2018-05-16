@@ -18,8 +18,9 @@ namespace Crunchy.Controllers {
         /// Get all projects.
         /// </summary>
         [HttpGet("projects", Name = "GetProjects")]
-        public List<Project> GetAllProjects() {
-            return _context.Projects.ToList();
+        public object[] GetAllProjects() {
+            //return _context.Projects.ToList();
+            return _context.Projects.Select(project => GetShortModel(project)).ToArray();
         }
 
 
@@ -41,6 +42,26 @@ namespace Crunchy.Controllers {
             return NotFound();
         }
 
+
+        public object GetShortModel(Project project) {
+            var entry = _context.Entry(project);
+            if (entry.State != EntityState.Detached) {
+                entry.Navigation("ValidStatuses").Load();
+                entry.Collection("OwnerUsers").Load();
+            }
+            long validStatuses = -1;
+            if (project.ValidStatuses != null)
+                validStatuses = project.ValidStatuses.Id;
+            long[] userIds = project.OwnerUsers.Select(owner => owner.Uid).ToArray();
+            return new {
+                Pid = project.Pid,
+                Name = project.Name,
+                Description = project.Description,
+                StatusSetId = validStatuses,
+                OwnerUserIds = userIds
+            };
+        }
+        
 
     }
 }
