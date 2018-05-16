@@ -43,6 +43,11 @@ namespace Crunchy.Controllers {
         }
 
 
+        /// <summary>
+        /// Generate a abbreviated version of the project
+        /// </summary>
+        /// <param name="project">The project to parse</param>
+        /// <returns>The abbreviated project, as an anonymous type</returns>
         public object GetShortModel(Project project) {
             var entry = _context.Entry(project);
             if (entry.State != EntityState.Detached) {
