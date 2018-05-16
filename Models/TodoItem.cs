@@ -76,6 +76,12 @@ namespace Crunchy.Models {
         public User Assignee { get; set; }
 
 
+        /// <summary>
+        /// Todo items that must be completed before this one.
+        /// </summary>
+        public IList<TodoItem> RequiredItems{ get; set; }
+
+
         public TodoItem() { }
 
 
