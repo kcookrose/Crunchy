@@ -11,10 +11,7 @@ namespace Crunchy.Controllers {
     public partial class TodoController : ControllerBase {
         
 
-        //private readonly TodoContext _context;
-
         public TodoController(TodoContext context) {
-            //_context = context;
 
             if (context.StatusSets.Count() == 0) DevSeedStatuses();
             if (context.Users.Count() == 0) DevSeedUser();
