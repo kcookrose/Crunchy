@@ -41,6 +41,11 @@ namespace Crunchy.Controllers {
         }
 
 
+        /// <summary>
+        /// Get project by user
+        /// </summary>
+        /// <param name="userId">The ID of the user to query</param>
+        /// <returns>The set of projects with the specified user as an owner</returns>
         [HttpGet("projects/byUser/{userId}")]
         public IActionResult GetProjectByUser(long userId) {
             using (var context = new TodoContext()) {
