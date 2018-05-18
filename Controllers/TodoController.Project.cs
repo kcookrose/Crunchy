@@ -19,7 +19,9 @@ namespace Crunchy.Controllers {
         /// </summary>
         [HttpGet("projects", Name = "GetProjects")]
         public object[] GetAllProjects() {
-            return _context.Projects.Select(project => GetShortModel(project)).ToArray();
+            using (var context = new TodoContext()) {
+                return context.Projects.Select(project => GetShortModel(project)).ToArray();
+            }
         }
 
 
@@ -30,10 +32,12 @@ namespace Crunchy.Controllers {
         /// <returns>The project, or null if not found</returns>
         [HttpGet("projects/{id}")]
         public IActionResult GetProject(long id) {
-            var project = _context.Projects.Find(id);
-            if (project != null)
-                return Ok(GetDetailedModel(project));
-            return NotFound();
+            using (var context = new TodoContext()) {
+                var project = context.Projects.Find(id);
+                if (project != null)
+                    return Ok(GetDetailedModel(project));
+                return NotFound();
+            }
         }
 
 
@@ -43,17 +47,19 @@ namespace Crunchy.Controllers {
         /// <param name="project">The project to parse</param>
         /// <returns>The abbreviated project, as an anonymous type</returns>
         public object GetShortModel(Project project) {
-            var entry = _context.Entry(project);
-            if (entry.State != EntityState.Detached) {
-                entry.Collection("OwnerUsers").Load();
+            using (var context = new TodoContext()) {
+                var entry = context.Entry(project);
+                if (entry.State != EntityState.Detached) {
+                    entry.Collection("OwnerUsers").Load();
+                }
+                long[] userIds = project.OwnerUsers.Select(owner => owner.Uid).ToArray();
+                return new {
+                    Pid = project.Pid,
+                    Name = project.Name,
+                    OwnerUserIds = userIds,
+                    Tags = project.Tags
+                };
             }
-            long[] userIds = project.OwnerUsers.Select(owner => owner.Uid).ToArray();
-            return new {
-                Pid = project.Pid,
-                Name = project.Name,
-                OwnerUserIds = userIds,
-                Tags = project.Tags
-            };
         }
         
 
@@ -63,26 +69,28 @@ namespace Crunchy.Controllers {
         /// <param name="project">The project to parse</param>
         /// <returns>The detailed object, as an anonymous type</returns>
         public object GetDetailedModel(Project project) {
-            var entry = _context.Entry(project);
-            if (entry.State != EntityState.Detached) {
-                entry.Navigation("ValidStatuses").Load();
-                entry.Collection("OwnerUsers").Load();
-                entry.Collection("Files").Load();
+            using (var context = new TodoContext()) {
+                var entry = context.Entry(project);
+                if (entry.State != EntityState.Detached) {
+                    entry.Navigation("ValidStatuses").Load();
+                    entry.Collection("OwnerUsers").Load();
+                    entry.Collection("Files").Load();
+                }
+                long validStatuses = -1;
+                if (project.ValidStatuses != null)
+                    validStatuses = project.ValidStatuses.Id;
+                long[] userIds = project.OwnerUsers.Select(owner => owner.Uid).ToArray();
+                string[] files = project.Files.Select(file => file.RepoUrl).ToArray();
+                return new {
+                    Pid = project.Pid,
+                    Name = project.Name,
+                    Description = project.Description,
+                    StatusSetId = validStatuses,
+                    OwnerUserIds = userIds,
+                    Tags = project.Tags,
+                    Files = files
+                };
             }
-            long validStatuses = -1;
-            if (project.ValidStatuses != null)
-                validStatuses = project.ValidStatuses.Id;
-            long[] userIds = project.OwnerUsers.Select(owner => owner.Uid).ToArray();
-            string[] files = project.Files.Select(file => file.RepoUrl).ToArray();
-            return new {
-                Pid = project.Pid,
-                Name = project.Name,
-                Description = project.Description,
-                StatusSetId = validStatuses,
-                OwnerUserIds = userIds,
-                Tags = project.Tags,
-                Files = files
-            };
         }
     }
 }

@@ -12,8 +12,13 @@ namespace Crunchy.Models {
 
         public DbSet<StatusSet> StatusSets { get; set; }
  
-        public TodoContext(DbContextOptions<TodoContext> options) : base(options) {
-        }
+        //public TodoContext(DbContextOptions<TodoContext> options) : base(options) {
+        //}
+
+        /*public TodoContext() {
+            var optionsBuilder = new DbContextOptionsBuilder<TodoContext>();
+            OnConfiguring(optionsBuilder);
+        }*/
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             optionsBuilder.UseSqlite("Data Source=crunchy.db");    
