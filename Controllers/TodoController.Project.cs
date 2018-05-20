@@ -50,9 +50,8 @@ namespace Crunchy.Controllers {
         public IActionResult GetProjectByUser(long userId) {
             using (var context = new TodoContext()) {
                 var filteredProjects = context.Projects
-                    //.Include(project => project.OwnerUsers)
-                    .Where(project => project.OwnerUsers
-                        .Any(user => user.Uid == userId));
+                    .Where(project => project.OwnerUsers.Count == 0 ||
+                        project.OwnerUsers.Any(user => user.Uid == userId));
                 var formattedProjects = filteredProjects
                     .Select(project => GetShortModel(project))
                     .ToArray();
