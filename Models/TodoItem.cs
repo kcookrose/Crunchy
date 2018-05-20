@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -47,13 +49,37 @@ namespace Crunchy.Models {
         /// <summary>
         /// Files associated with the task.
         /// </summary>
-        public IList<FileRef> Files { get; set; } 
+        public IList<FileRef> Files { get; set; }
+
+
+        /// <summary>
+        /// IDs of files associated with the item.
+        /// </summary>
+        [NotMapped]
+        public long[] FileIds {
+            get {
+                return Files.Select(fileRef => fileRef.Id).ToArray();
+            }
+        }
 
 
         /// <summary>
         /// When part of a task group, this will be the owning task.
         /// </summary>
         public TodoItem OwnerTodoItem { get; set; }
+
+
+        /// <summary>
+        /// The ID of the owning todo item, of -1 if none.
+        /// </summary>
+        [NotMapped]
+        public long OwnerTodoItemId {
+            get {
+                if (OwnerTodoItem != null)
+                    return OwnerTodoItem.Tid;
+                return -1;
+            }
+        }
 
 
         /// <summary>
@@ -64,10 +90,32 @@ namespace Crunchy.Models {
 
 
         /// <summary>
+        /// The ID of the project the item belongs to.
+        /// </summary>
+        [NotMapped]
+        public long ProjectId {
+            get {
+                return Project.Pid;
+            }
+        }
+
+
+        /// <summary>
         /// The current status of the task.
         /// </summary>
         [Required]
         public Status Status { get; set; }
+
+
+        /// <summary>
+        /// The ID of the current status
+        /// </summary>
+        [NotMapped]
+        public long StatusId {
+            get {
+                return Status.Sid;
+            }
+        }
 
 
         /// <summary>
@@ -77,9 +125,34 @@ namespace Crunchy.Models {
 
 
         /// <summary>
+        /// The ID of the assignee or -1 if unassigned
+        /// </summary>
+        [NotMapped]
+        public long AssigneeId {
+            get {
+                if (Assignee != null) return Assignee.Uid;
+                return -1;
+            }
+        }
+
+
+        /// <summary>
         /// Todo items that must be completed before this one.
         /// </summary>
         public IList<TodoItem> RequiredItems{ get; set; }
+
+
+        /// <summary>
+        /// The IDs of items that must be completed before this one.
+        /// </summary>
+        [NotMapped]
+        public long[] RequiredItemIds {
+            get {
+                return RequiredItems
+                    .Select(todoItem => todoItem.Tid)
+                    .ToArray();
+            }
+        }
 
 
         public TodoItem() { }
@@ -101,6 +174,7 @@ namespace Crunchy.Models {
                 ModelBuilder builder) {
             builder.Entity<TodoItem>().HasMany(ent => ent.Files).WithOne();
             builder.Entity<TodoItem>().HasOne(ent => ent.Project).WithMany();
+
         }
         
     }
