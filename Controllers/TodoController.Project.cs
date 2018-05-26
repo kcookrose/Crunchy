@@ -20,7 +20,9 @@ namespace Crunchy.Controllers {
         [HttpGet("projects", Name = "GetProjects")]
         public object[] GetAllProjects() {
             using (var context = new TodoContext()) {
-                return context.Projects.Select(project => GetShortModel(project)).ToArray();
+                return context.Projects
+                    .Select(project => GetShortModel(project))
+                    .ToArray();
             }
         }
 

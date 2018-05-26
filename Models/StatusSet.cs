@@ -53,6 +53,22 @@ namespace Crunchy.Models {
         }
 
 
+        /// <summary>
+        /// To string
+        /// </summary>
+        override public string ToString() {
+            string res = base.ToString();
+            res += '[';
+            for (int i = 0; i < Statuses.Count; i++) {
+                res += Statuses[i];
+                if (i != Statuses.Count-1)
+                    res += ", ";
+            }
+            res += ']';
+            return res;
+        }
+
+
         public static void OnModelCreating(TodoContext context, ModelBuilder modelBuilder) {
             modelBuilder.Entity<StatusSet>().HasMany(ss => ss.Statuses).WithOne();
         }

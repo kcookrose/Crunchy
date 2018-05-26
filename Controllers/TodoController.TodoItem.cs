@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
 using System.Linq;
 using Crunchy.Models;
@@ -16,6 +17,23 @@ namespace Crunchy.Controllers {
 
 
         /// <summary>
+        /// Get all todo items
+        /// NOTE: Should probably be removed in relase
+        /// </summary>
+        [HttpGet("todoItems")]
+        public IActionResult GetAllTodoItems() {
+            using (var context = new TodoContext()) {
+                var res = context.TodoItems
+                    .Include(todoItem => todoItem.Project)
+                    .Include(todoItem => todoItem.Assignee)
+                    .Select(todo => GetShortModel(todo))
+                    .ToArray();
+                return Ok(res);
+            }
+        }
+
+
+        /// <summary>
         /// Get a todoItem by its ID.
         /// </summary>
         /// <param name="id">The ID of the desired todoitem</param>
@@ -25,6 +43,7 @@ namespace Crunchy.Controllers {
             using (var context = new TodoContext()) {
                 var todoItem = context.TodoItems.Find(id);
                 if (todoItem != null) {
+                    EnsureDeepLoaded(context.Entry(todoItem));
                     return Ok(GetDetailedModel(todoItem));
                 }
             }
@@ -39,11 +58,15 @@ namespace Crunchy.Controllers {
         /// <returns>A set of visible todo items</returns>
         [HttpGet("todoItems/byUser/{userId}")]
         public IActionResult GetTodoItemByUser(long userId) {
+            if (userId < 1) return NotFound();
             using (var context = new TodoContext()) {
                 var filteredItems = context.TodoItems
-                    .Where(todoItem => (todoItem.Assignee == null || 
-                                        todoItem.Assignee.Uid == userId));
+                    .Include(todoItem => todoItem.Assignee)
+                    .Include(todoItem => todoItem.Project)
+                    .ToArray();
                 var formattedItems = filteredItems
+                    .Where(todoItem => todoItem.AssigneeId == -1 ||
+                        todoItem.AssigneeId == userId)
                     .Select(todoItem => GetShortModel(todoItem))
                     .ToArray();
                 if (formattedItems.Length > 0)
@@ -57,13 +80,15 @@ namespace Crunchy.Controllers {
         /// Get a shortened representation of the todo item
         /// </summary>
         public object GetShortModel(TodoItem todoItem) {
-            return new {
-                Tid = todoItem.Tid,
-                Name = todoItem.Name,
-                Tags = todoItem.Tags,
-                ProjectId = todoItem.Project.Pid,
-                AssigneeId = todoItem.AssigneeId
-            };
+            using (var context = new TodoContext()) {
+                return new {
+                    Tid = todoItem.Tid,
+                    Name = todoItem.Name,
+                    Tags = todoItem.Tags,
+                    ProjectId = todoItem.ProjectId,
+                    AssigneeId = todoItem.AssigneeId
+                };
+            }
         }
 
 
@@ -71,6 +96,15 @@ namespace Crunchy.Controllers {
         /// Get a detailed representation of the todo item
         /// </summary>
         public object GetDetailedModel(TodoItem todoItem) {
+            using (var context = new TodoContext()) {
+                var entry = context.Entry(todoItem);
+                if (entry.State == EntityState.Detached)
+                    entry = context.Attach(todoItem);
+                foreach (var navItem in entry.Navigations)
+                    navItem.Load();
+                foreach (var collection in entry.Collections)
+                    collection.Load();
+            }
             return new {
                 Tid = todoItem.Tid,
                 Name = todoItem.Name,

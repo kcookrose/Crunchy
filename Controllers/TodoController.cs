@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
 using System.Linq;
 using Crunchy.Models;
-
 
 namespace Crunchy.Controllers {
 
@@ -26,10 +26,22 @@ namespace Crunchy.Controllers {
         public void DevSeedStatuses() {
             using (var context = new TodoContext()) {
                 var newStatusSet = new StatusSet("Test Status Set");
-                foreach (var newStatus in new string []{"TODO", "In Progress", "Complete"})
-                    newStatusSet.Add(newStatus);
+                //foreach (var newStatus in new string []{"TODO", "In Progress", "Complete"})
+                 //   newStatusSet.Add(newStatus);
+                newStatusSet.Add("TODO");
+                newStatusSet.Add("In Progress");
+                newStatusSet.Add("Complete");
+                
                 context.StatusSets.Add(newStatusSet);
                 context.SaveChanges();
+            }
+            using (var context = new TodoContext()) {
+                System.Console.WriteLine("Validating Statues...");
+                System.Console.WriteLine("--Count: " + context.StatusSets.Count());
+                foreach (var ss in context.StatusSets) {
+                    EnsureDeepLoaded(context.Entry(ss));
+                    System.Console.WriteLine("---" + ss.ToString());
+                }
             }
         }
 
@@ -49,11 +61,15 @@ namespace Crunchy.Controllers {
                     System.Console.WriteLine(" !!! Tried to create Todo without project");
                     return;
                 }
+                EnsureDeepLoaded(context.Entry(project));
+                EnsureDeepLoaded(context.Entry(project.ValidStatuses));
                 var initItem = new TodoItem(project, project.ValidStatuses.Statuses[0]);
                 initItem.Name = "Init Item";
                 initItem.Project = context.Projects.FirstOrDefault();
                 initItem.Files.Add(newFile);
+                initItem.Tags = "mojo;josie;kibby";
                 if (user != null) initItem.Assignee = user;
+                else System.Console.WriteLine("NULL USER");
                 context.TodoItems.Add(initItem);
                 context.SaveChanges();
             }
@@ -90,6 +106,22 @@ namespace Crunchy.Controllers {
                 context.SaveChanges();
             }
         }
+
+
+        /// <summary>
+        /// Deep load all entries on the item
+        /// </summary>
+        public void EnsureDeepLoaded(EntityEntry entry) {
+            foreach (var collection in entry.Collections) {
+                collection.Load();
+            }
+            foreach (var navigation in entry.Navigations) {
+                navigation.Load();
+            }
+        }
+
+
+
     }
 }
 

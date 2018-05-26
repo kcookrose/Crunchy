@@ -32,6 +32,16 @@ namespace Crunchy.Models
         public Status(string name) {
             Name = name;
         }
+
+
+        /// <summary>
+        /// To string
+        /// </summary>
+        override public string ToString() {
+            string res = base.ToString();
+            res += '[' + Name + ']';
+            return res;
+        }
     }
 
 }

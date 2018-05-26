@@ -11,6 +11,8 @@ namespace Crunchy.Models {
         public DbSet<Project> Projects { get; set; }
 
         public DbSet<StatusSet> StatusSets { get; set; }
+
+        public DbSet<Status> Statuses { get; set; }
  
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             optionsBuilder.UseSqlite("Data Source=crunchy.db");    

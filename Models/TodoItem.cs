@@ -95,7 +95,9 @@ namespace Crunchy.Models {
         [NotMapped]
         public long ProjectId {
             get {
-                return Project.Pid;
+                if (Project != null)
+                    return Project.Pid;
+                return -1;
             }
         }
 
