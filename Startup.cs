@@ -8,6 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Crunchy.Models;
 
+using Crunchy.Services;
+using Crunchy.Services.Interfaces;
+
 namespace Crunchy
 {
     public class Startup {
@@ -20,6 +23,7 @@ namespace Crunchy
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
+            services.AddTransient<ITodoItemService, TodoItemService>();
             services.AddDbContext<TodoContext>();
             services.AddMvc();
         }

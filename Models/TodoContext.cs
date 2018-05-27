@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Crunchy.Models {
 
@@ -22,6 +23,24 @@ namespace Crunchy.Models {
             TodoItem.OnModelCreating(this, builder);
             FileRef.OnModelCreating(this, builder);
             StatusSet.OnModelCreating(this, builder);
+        }
+
+
+        public void EnsureDeepLoaded(object value) {
+            var entry = Entry(value);
+            if (entry.State == EntityState.Detached)
+                entry = Attach(value);
+            EnsureDeepLoaded(entry);
+        }
+
+
+        public void EnsureDeepLoaded(EntityEntry entry) {
+            foreach (var collection in entry.Collections) {
+                collection.Load();
+            }
+            foreach (var navigation in entry.Navigations) {
+                navigation.Load();
+            }
         }
     }
 
