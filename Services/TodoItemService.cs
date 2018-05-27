@@ -10,13 +10,7 @@ using Crunchy.Models;
 
 namespace Crunchy.Services {
 
-    public class TodoItemService : ITodoItemService {
-
-        // Because I'm lazy
-        private static OkObjectResult Ok(object obj) => new OkObjectResult(obj);
-        private static OkResult Ok() => new OkResult();
-        private static NotFoundResult NotFound() => new NotFoundResult();
-
+    public class TodoItemService : CrunchyService, ITodoItemService {
 
         public IActionResult GetAllTodoItems() {
             using (var context = new TodoContext()) {
