@@ -58,7 +58,9 @@ namespace Crunchy.Models {
         [NotMapped]
         public long[] FileIds {
             get {
-                return Files.Select(fileRef => fileRef.Id).ToArray();
+                if (Files != null)
+                    return Files.Select(fileRef => fileRef.Id).ToArray();
+                return new long[0];
             }
         }
 
@@ -115,6 +117,8 @@ namespace Crunchy.Models {
         [NotMapped]
         public long StatusId {
             get {
+                if (Status == null)
+                    return -1;
                 return Status.Sid;
             }
         }
@@ -150,6 +154,8 @@ namespace Crunchy.Models {
         [NotMapped]
         public long[] RequiredItemIds {
             get {
+                if (RequiredItems == null)
+                    return new long[0];
                 return RequiredItems
                     .Select(todoItem => todoItem.Tid)
                     .ToArray();
