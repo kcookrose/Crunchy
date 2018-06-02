@@ -43,5 +43,10 @@ namespace Crunchy.Controllers {
                 return UserService.UpdateUser(userId, json);
             }            
         }
+
+
+        [HttpDelete("{userId}")]
+        public IActionResult DeleteUser(long userId)
+            => UserService.DeleteUser(userId);
     }
 }

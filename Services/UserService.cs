@@ -60,6 +60,17 @@ namespace Crunchy.Services {
         }
 
 
+        public IActionResult DeleteUser(long userId) {
+            using (var context = new TodoContext()) {
+                User victim = context.Users.Find(userId);
+                if (victim == null) return BadRequest();
+                context.Users.Remove(victim);
+                context.SaveChanges();
+                return NoContent();
+            }
+        }
+
+
         public User UserFromJson(string json) {
             var newUserObj = new {
                 Name = "",
