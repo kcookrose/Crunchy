@@ -10,6 +10,6 @@ namespace Crunchy.Services.Interfaces {
 
         IActionResult CreateUser(string newUserJson);
 
-        
+        IActionResult UpdateUser(long userId, string userJson);
     }
 }

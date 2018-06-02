@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
@@ -31,23 +32,56 @@ namespace Crunchy.Services {
 
 
         public IActionResult CreateUser(string newUserJson) {
+            User newUser = UserFromJson(newUserJson);
+            if (newUser == null) return BadRequest();
+            using (var context = new TodoContext()) {
+                context.Users.Add(newUser);
+                context.SaveChanges();
+                return CreatedAtRoute("GetUser", new {id = newUser.Uid},
+                        GetDetailedModel(newUser));
+            }
+        }
+
+
+        public IActionResult UpdateUser(long userId, string userJson) {
+            User user = UserFromJson(userJson);
+            if (user == null) return BadRequest();
+            using (var context = new TodoContext()) {
+                User origUser = context.Users.Find(userId);
+                if (origUser == null) return NotFound();
+                origUser.Name = user.Name;
+                if (user.DefaultProject != null)
+                    origUser.DefaultProject = context.Projects
+                            .Find(user.DefaultProject.Pid);
+                context.Update(origUser);
+                context.SaveChanges();
+                return NoContent();
+            }
+        }
+
+
+        public User UserFromJson(string json) {
             var newUserObj = new {
                 Name = "",
                 DefaultProjectId = 0L
             };
-            newUserObj = JsonConvert.DeserializeAnonymousType(newUserJson, newUserObj);
+            try {
+                newUserObj = JsonConvert.DeserializeAnonymousType(json, newUserObj);
+            } catch (JsonReaderException) {
+                System.Console.WriteLine("Failed to parse json: " + json);
+                return null;
+            }
+            if (String.IsNullOrEmpty(newUserObj.Name) ||
+                    newUserObj.DefaultProjectId == 0)
+                return null;
             using (var context = new TodoContext()) {
                 context.DevSeedDatabase();
                 User newUser = new User();
                 newUser.Name = newUserObj.Name;
-                foreach (var proj in context.Projects.ToArray())
-                    System.Console.WriteLine("pid: " + proj.Pid);
                 Project project = context.Projects.Find(newUserObj.DefaultProjectId);
                 if (project != null)
                     newUser.DefaultProject = project;
-                context.Users.Add(newUser);
-                context.SaveChanges();
-                return CreatedAtRoute("GetUser", new {id = newUser.Uid}, GetDetailedModel(newUser));
+                return newUser;
             }
         }
 

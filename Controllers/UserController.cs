@@ -34,5 +34,14 @@ namespace Crunchy.Controllers {
                 return UserService.CreateUser(json);
             }
         }
+
+
+        [HttpPut("{userId}")]
+        public IActionResult UpdateUser(long userId) {
+            using (StreamReader bodyReader = new StreamReader(Request.Body)) {
+                string json = bodyReader.ReadToEnd();
+                return UserService.UpdateUser(userId, json);
+            }            
+        }
     }
 }

@@ -9,5 +9,7 @@ namespace Crunchy.Services {
         protected static NotFoundResult NotFound() => new NotFoundResult();
         protected static CreatedAtRouteResult CreatedAtRoute(string route, object formInfo, object newObj)
             => new CreatedAtRouteResult(route, formInfo, newObj);
+        protected static NoContentResult NoContent() => new NoContentResult();
+        protected static BadRequestResult BadRequest() => new BadRequestResult();
     }
 }
