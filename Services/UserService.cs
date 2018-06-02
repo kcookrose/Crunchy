@@ -1,6 +1,7 @@
 using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 using Crunchy.Models;
 using Crunchy.Services.Interfaces;
@@ -29,6 +30,28 @@ namespace Crunchy.Services {
         }
 
 
+        public IActionResult CreateUser(string newUserJson) {
+            var newUserObj = new {
+                Name = "",
+                DefaultProjectId = 0L
+            };
+            newUserObj = JsonConvert.DeserializeAnonymousType(newUserJson, newUserObj);
+            using (var context = new TodoContext()) {
+                context.DevSeedDatabase();
+                User newUser = new User();
+                newUser.Name = newUserObj.Name;
+                foreach (var proj in context.Projects.ToArray())
+                    System.Console.WriteLine("pid: " + proj.Pid);
+                Project project = context.Projects.Find(newUserObj.DefaultProjectId);
+                if (project != null)
+                    newUser.DefaultProject = project;
+                context.Users.Add(newUser);
+                context.SaveChanges();
+                return CreatedAtRoute("GetUser", new {id = newUser.Uid}, GetDetailedModel(newUser));
+            }
+        }
+
+
         public object GetShortModel(User user) {
             return new {
                 Uid = user.Uid,
@@ -41,7 +64,7 @@ namespace Crunchy.Services {
             return new {
                 Uid = user.Uid,
                 Name = user.Name,
-                DefaultProject = user.DefaultProject
+                DefaultProjectId = user.DefaultProjectId
             };
         }
     }

@@ -7,5 +7,9 @@ namespace Crunchy.Services.Interfaces {
         IActionResult GetAllUsers();
 
         IActionResult GetUser(long userId);
+
+        IActionResult CreateUser(string newUserJson);
+
+        
     }
 }

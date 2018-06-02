@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace Crunchy.Models {
@@ -23,5 +24,18 @@ namespace Crunchy.Models {
         /// A default project to assign tasks to.
         /// </summary>
         public Project DefaultProject { get; set; } 
+
+
+        /// <summary>
+        /// The id of a default project to assign tasks to.
+        /// </summary>
+        [NotMapped]
+        public long DefaultProjectId {
+            get {
+                if (DefaultProject == null)
+                    return -1;
+                return DefaultProject.Pid;
+            }
+        }
     }
 }

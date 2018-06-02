@@ -1,6 +1,9 @@
+using System.IO;
 
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
+using Crunchy.Models;
 using Crunchy.Services.Interfaces;
 
 namespace Crunchy.Controllers {
@@ -19,8 +22,17 @@ namespace Crunchy.Controllers {
             => UserService.GetAllUsers();
 
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name="GetUser")]
         public IActionResult GetUser(long id)
             => UserService.GetUser(id);
+
+
+        [HttpPost]
+        public IActionResult CreateUser() {
+            using (StreamReader bodyReader = new StreamReader(Request.Body)) {
+                string json = bodyReader.ReadToEnd();
+                return UserService.CreateUser(json);
+            }
+        }
     }
 }
