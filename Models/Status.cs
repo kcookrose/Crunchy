@@ -1,7 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-//using System.Collections.Generic;
+
 using Microsoft.EntityFrameworkCore;
+
+using Newtonsoft.Json;
 
 namespace Crunchy.Models
 {
@@ -11,6 +13,7 @@ namespace Crunchy.Models
         /// Unique ID for the status.
         /// </summary>
         [Key]
+        [JsonIgnore]
         public long Sid { get; set; }
 
 
@@ -31,6 +34,11 @@ namespace Crunchy.Models
 
         public Status(string name) {
             Name = name;
+        }
+
+        public Status(string name, string color) {
+            Name = name;
+            Color = color;
         }
 
 
