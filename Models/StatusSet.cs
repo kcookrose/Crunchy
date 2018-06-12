@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+
 using Microsoft.EntityFrameworkCore;
+
+using Newtonsoft.Json;
 
 namespace Crunchy.Models {
 
@@ -9,6 +12,7 @@ namespace Crunchy.Models {
         /// <summary>
         /// Unique key for the status set.
         /// </summary>
+        [JsonIgnore]
         public long Id { get; set; }
 
 
@@ -50,6 +54,16 @@ namespace Crunchy.Models {
         /// <param name="statusName">The name for the status to add</param>
         public void Add(string statusName) {
             Statuses.Add(new Status(statusName));
+        }
+
+
+        /// <summary>
+        /// Add a new status to the set.
+        /// </summary>
+        /// <param name="statusName">The name of the status to add</param>
+        /// <param name="statusColor">The color of the status to add</param>
+        public void Add(string statusName, string statusColor) {
+            Statuses.Add(new Status(statusName, statusColor));
         }
 
 
