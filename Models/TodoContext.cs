@@ -65,9 +65,9 @@ namespace Crunchy.Models {
         public void DevSeedStatuses() {
             var newStatusSet = new StatusSet("Test Status Set");
 
-            newStatusSet.Add("TODO");
-            newStatusSet.Add("In Progress");
-            newStatusSet.Add("Complete");
+            newStatusSet.Add("TODO", "FF0000");
+            newStatusSet.Add("In Progress", "FFFF00");
+            newStatusSet.Add("Complete", "00FF00");
                
             StatusSets.Add(newStatusSet);
             SaveChanges();
