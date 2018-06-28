@@ -8,12 +8,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Crunchy
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
+namespace Crunchy {
+    public class Program {
+        public static void Main(string[] args) {
             BuildWebHost(args).Run();
         }
 
