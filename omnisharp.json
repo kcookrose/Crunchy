@@ -2,6 +2,8 @@
     "FormattingOptions": {
         "NewLinesForBracesInMethods": false,
         "NewLinesForBracesInTypes": false,
-        "NewLinesForBracesInProperties": false
+        "NewLinesForBracesInProperties": false,
+        "NewLinesForBracesInControlBlocks": false,
+        "NewLinesForBracesInAnonymousTypes": false
     }
 }
