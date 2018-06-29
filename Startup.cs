@@ -27,6 +27,7 @@ namespace Crunchy
             services.AddTransient<ITodoItemService, TodoItemService>();
             services.AddTransient<IProjectService, ProjectService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IStatusSetService, StatusSetService>();
             services.AddDbContext<TodoContext>();
             services.AddMvc();
         }

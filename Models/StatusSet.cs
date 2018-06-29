@@ -12,7 +12,6 @@ namespace Crunchy.Models {
         /// <summary>
         /// Unique key for the status set.
         /// </summary>
-        [JsonIgnore]
         public long Id { get; set; }
 
 
