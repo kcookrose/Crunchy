@@ -16,6 +16,9 @@ namespace Crunchy.Models {
         public DbSet<StatusSet> StatusSets { get; set; }
 
         public DbSet<Status> Statuses { get; set; }
+
+        public DbSet<FileRef> FileRefs { get; set; }
+        
  
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             optionsBuilder.UseSqlite("Data Source=crunchy.db");    
@@ -27,14 +30,6 @@ namespace Crunchy.Models {
             FileRef.OnModelCreating(this, builder);
             StatusSet.OnModelCreating(this, builder);
 
-        }
-
-
-        public void EnsureDeepLoaded(object value) {
-            var entry = Entry(value);
-            if (entry.State == EntityState.Detached)
-                entry = Attach(value);
-            EnsureDeepLoaded(entry);
         }
 
 

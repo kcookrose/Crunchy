@@ -28,7 +28,8 @@ namespace Crunchy.Services {
             using (var context = new TodoContext()) {
                 var todoItem = context.TodoItems.Find(id);
                 if (todoItem != null) {
-                    context.EnsureDeepLoaded(todoItem);
+                    var ent = context.Entry(todoItem);
+                    context.EnsureDeepLoaded(ent);
                     return Ok(GetDetailedModel(todoItem));
                 }
             }
