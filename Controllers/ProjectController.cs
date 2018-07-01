@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
 
 using Crunchy.Services.Interfaces;
@@ -28,7 +29,7 @@ namespace Crunchy.Controllers {
         /// </summary>
         /// <param name="id">The id of the desired project</param>
         /// <returns>The project, or null if not found</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetProject")]
         public IActionResult GetProject(long id)
             => ProjectService.GetProject(id);
 
@@ -42,5 +43,28 @@ namespace Crunchy.Controllers {
         public IActionResult GetProjectByUser(long userId,
                 [FromQuery(Name="includeunowned")]bool includeUnowned)
             => ProjectService.GetProjectByUser(userId, includeUnowned);
+
+        
+        [HttpPost]
+        public IActionResult CreateProject() {
+            using (var reader = new StreamReader(Request.Body)) {
+                string json = reader.ReadToEnd();
+                return ProjectService.CreateProject(json);
+            }
+        }
+
+
+        [HttpPut("{pId}")]
+        public IActionResult UpdateProject(long pId) {
+            using (var reader = new StreamReader(Request.Body)) {
+                string json = reader.ReadToEnd();
+                return ProjectService.UpdateProject(pId, json);
+            }
+        }
+
+
+        [HttpDelete("{pId}")]
+        public IActionResult DeleteProject(long pId)
+            => ProjectService.DeleteProject(pId);
     }
 }

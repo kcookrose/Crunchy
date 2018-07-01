@@ -1,7 +1,10 @@
+using System;
 using System.Linq;
-
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
+using Newtonsoft.Json;
 
 using Crunchy.Models;
 using Crunchy.Services.Interfaces;
@@ -10,7 +13,7 @@ namespace Crunchy.Services {
 
     public class ProjectService : CrunchyService, IProjectService {
 
-        public IActionResult GetAllProjects() {
+        public IActionResult GetAllProjects() { // FIXME: Doesn't populate navigation items
             using (var context = new TodoContext()) {
                 var res = context.Projects
                     .Select(project => GetShortModel(project))
@@ -23,8 +26,11 @@ namespace Crunchy.Services {
         public IActionResult GetProject(long projectId) {
             using (var context = new TodoContext()) {
                 var project = context.Projects.Find(projectId);
-                if (project != null)
+                if (project != null) {
+                    var entry = context.Entry(project);
+                    context.EnsureDeepLoaded(entry);
                     return Ok(GetDetailedModel(project));
+                }    
                 return NotFound();
             }
         }
@@ -42,6 +48,64 @@ namespace Crunchy.Services {
                     return Ok(formattedProjects);
             }
             return NotFound();
+        }
+
+
+        public IActionResult CreateProject(string projectJson) {
+            Project newProj = ProjectFromJson(projectJson);
+            if (newProj == null) return BadRequest();
+            using (var context = new TodoContext()) {
+                foreach (var file in newProj.Files)
+                    context.FileRefs.Add(file);
+                context.ChangeTracker.TrackGraph(newProj, (node => node.Entry.State = node.Entry.IsKeySet ? EntityState.Unchanged : EntityState.Added));
+                context.SaveChanges();
+                return CreatedAtRoute("GetProject", new { id = newProj.Pid}, newProj); // FIXME: Doesn't give correct response data
+            }
+        }
+
+
+        public IActionResult UpdateProject(long pId, string projectJson) {
+            Project newProj = ProjectFromJson(projectJson);
+            if (newProj == null) return BadRequest();
+            using (var context = new TodoContext()) {
+                Project oldProj = context.Projects.Find(pId);
+                if (oldProj == null) return NotFound();
+                var entry = context.Entry(oldProj);
+                context.EnsureDeepLoaded(entry);
+                foreach (var file in oldProj.Files)
+                    context.FileRefs.Remove(file);
+                oldProj.Files.Clear();
+                oldProj.OwnerUsers.Clear();
+
+                oldProj.Name = newProj.Name;
+                oldProj.Description = newProj.Description;
+                if (newProj.ValidStatuses != null)
+                    oldProj.ValidStatuses = context.StatusSets.Find(newProj.ValidStatuses.Id);
+                else
+                    oldProj.ValidStatuses = null;
+                foreach (var user in newProj.OwnerUsers) // TODO: Test without explicit visiting
+                    oldProj.OwnerUsers.Add(context.Users.Find(user.Uid));
+                oldProj.Tags = newProj.Tags;
+                foreach (var file in newProj.Files) {
+                    context.FileRefs.Add(file);
+                    newProj.Files.Add(file);
+                }
+                context.SaveChanges();
+                return NoContent();
+            }
+        }
+
+
+        public IActionResult DeleteProject(long pId) {
+            using (var context = new TodoContext()) {
+                Project oldProj = context.Projects.Find(pId);
+                if (oldProj == null) return NotFound();
+                foreach (var file in oldProj.Files) // FIXME: Doesn't trigger physical deletion
+                    context.FileRefs.Remove(file);
+                context.Projects.Remove(oldProj);
+                context.SaveChanges();
+                return NoContent();
+            }
         }
 
 
@@ -94,6 +158,59 @@ namespace Crunchy.Services {
                     Tags = project.Tags,
                     Files = files
                 };
+            }
+        }
+
+
+        public Project ProjectFromJson(string projectJson) {
+            var newProj = new {
+                Pid = -1L,
+                Name = "",
+                Description = "",
+                StatusSetId = -1L,
+                OwnerUserIds = new List<long>(),
+                Tags = "",
+                Files = new List<string>()
+            };
+            newProj = JsonConvert.DeserializeAnonymousType(projectJson, newProj);
+            if (String.IsNullOrEmpty(newProj.Name)) {
+                System.Console.WriteLine("Bad name");
+                return null;
+            }
+            using (var context = new TodoContext()) {
+                if (newProj.StatusSetId > 0) {
+                    if (context.StatusSets.Find(newProj.StatusSetId) == null) {
+                        System.Console.WriteLine("Invalid status set");
+                        return null;
+                    }    
+                }
+                if (newProj.Pid > 0) {
+                    if (context.Projects.Find(newProj.Pid) == null) {
+                        System.Console.WriteLine("Invalid ID: " + newProj.Pid);
+                        return null;
+                    }
+                }
+                foreach (long uId in newProj.OwnerUserIds) {
+                    if (context.Users.Find(uId) == null) {
+                        System.Console.WriteLine("Invalid user: " + uId);
+                        return null;
+                    }
+                }
+                Project res = new Project();
+                res.Pid = newProj.Pid;
+                res.Name = newProj.Name;
+                res.Description = newProj.Description;
+                res.ValidStatuses = context.StatusSets.Find(newProj.StatusSetId);
+                res.OwnerUsers = new List<User>();
+                foreach (var userId in newProj.OwnerUserIds) {
+                    res.OwnerUsers.Add(context.Users.Find(userId));
+                }
+                res.Tags = newProj.Tags;
+                res.Files = new List<FileRef>();
+                foreach (var file in newProj.Files) {
+                    res.Files.Add(new FileRef(file));
+                }
+                return res;
             }
         }
     }
