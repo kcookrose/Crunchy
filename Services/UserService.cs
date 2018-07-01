@@ -24,8 +24,11 @@ namespace Crunchy.Services {
         public IActionResult GetUser(long userId) {
             using (var context = new TodoContext()) {
                 var user = context.Users.Find(userId);
-                if (user != null)
+                if (user != null) {
+                    var entry = context.Entry(user);
+                    context.EnsureDeepLoaded(entry);
                     return Ok(GetDetailedModel(user));
+                }
                 return NotFound();
             }
         }
@@ -35,6 +38,8 @@ namespace Crunchy.Services {
             User newUser = UserFromJson(newUserJson);
             if (newUser == null) return BadRequest();
             using (var context = new TodoContext()) {
+                if (newUser.DefaultProject != null)
+                    newUser.DefaultProject = context.Projects.Find(newUser.DefaultProjectId);
                 context.Users.Add(newUser);
                 context.SaveChanges();
                 return CreatedAtRoute("GetUser", new {id = newUser.Uid},
@@ -86,7 +91,6 @@ namespace Crunchy.Services {
                     newUserObj.DefaultProjectId == 0)
                 return null;
             using (var context = new TodoContext()) {
-                context.DevSeedDatabase();
                 User newUser = new User();
                 newUser.Name = newUserObj.Name;
                 Project project = context.Projects.Find(newUserObj.DefaultProjectId);
