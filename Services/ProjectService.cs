@@ -13,11 +13,11 @@ namespace Crunchy.Services {
 
     public class ProjectService : CrunchyService, IProjectService {
 
-        public IActionResult GetAllProjects() { // FIXME: Doesn't populate navigation items
+        public IActionResult GetAllProjects() {
             using (var context = new TodoContext()) {
-                var res = context.Projects
-                    .Select(project => GetShortModel(project))
-                    .ToArray();
+                var res = new List<object>();
+                foreach (var proj in context.Projects)
+                    res.Add(GetShortModel(context, proj));
                 return Ok(res);
             }
         }
@@ -27,9 +27,7 @@ namespace Crunchy.Services {
             using (var context = new TodoContext()) {
                 var project = context.Projects.Find(projectId);
                 if (project != null) {
-                    var entry = context.Entry(project);
-                    context.EnsureDeepLoaded(entry);
-                    return Ok(GetDetailedModel(project));
+                    return Ok(GetDetailedModel(context, project));
                 }    
                 return NotFound();
             }
@@ -42,7 +40,7 @@ namespace Crunchy.Services {
                     .Where(project => project.OwnerUsers.Count == 0 ||
                         project.OwnerUsers.Any(user => user.Uid == userId));
                 var formattedProjects = filteredProjects
-                    .Select(project => GetShortModel(project))
+                    .Select(project => GetShortModel(context, project))
                     .ToArray();
                 if (formattedProjects.Length > 0)
                     return Ok(formattedProjects);
@@ -114,20 +112,16 @@ namespace Crunchy.Services {
         /// </summary>
         /// <param name="project">The project to parse</param>
         /// <returns>The abbreviated project, as an anonymous type</returns>
-        public object GetShortModel(Project project) {
-            using (var context = new TodoContext()) {
-                var entry = context.Entry(project);
-                if (entry.State != EntityState.Detached) {
-                    entry.Collection("OwnerUsers").Load();
-                }
-                long[] userIds = project.OwnerUsers.Select(owner => owner.Uid).ToArray();
-                return new {
-                    Pid = project.Pid,
-                    Name = project.Name,
-                    OwnerUserIds = userIds,
-                    Tags = project.Tags
-                };
-            }
+        public object GetShortModel(TodoContext context, Project project) {
+            var entry = context.Entry(project);
+            context.EnsureDeepLoaded(entry);
+            long[] userIds = project.OwnerUsers.Select(owner => owner.Uid).ToArray();
+            return new {
+                Pid = project.Pid,
+                Name = project.Name,
+                OwnerUserIds = userIds,
+                Tags = project.Tags
+            };
         }
         
 
@@ -136,29 +130,23 @@ namespace Crunchy.Services {
         /// </summary>
         /// <param name="project">The project to parse</param>
         /// <returns>The detailed object, as an anonymous type</returns>
-        public object GetDetailedModel(Project project) {
-            using (var context = new TodoContext()) {
-                var entry = context.Entry(project);
-                if (entry.State != EntityState.Detached) {
-                    entry.Navigation("ValidStatuses").Load();
-                    entry.Collection("OwnerUsers").Load();
-                    entry.Collection("Files").Load();
-                }
-                long validStatuses = -1;
-                if (project.ValidStatuses != null)
-                    validStatuses = project.ValidStatuses.Id;
-                long[] userIds = project.OwnerUsers.Select(owner => owner.Uid).ToArray();
-                string[] files = project.Files.Select(file => file.RepoUrl).ToArray();
-                return new {
-                    Pid = project.Pid,
-                    Name = project.Name,
-                    Description = project.Description,
-                    StatusSetId = validStatuses,
-                    OwnerUserIds = userIds,
-                    Tags = project.Tags,
-                    Files = files
-                };
-            }
+        public object GetDetailedModel(TodoContext context, Project project) {
+            var entry = context.Entry(project);
+            context.EnsureDeepLoaded(entry);
+            long validStatuses = -1;
+            if (project.ValidStatuses != null)
+                validStatuses = project.ValidStatuses.Id;
+            long[] userIds = project.OwnerUsers.Select(owner => owner.Uid).ToArray();
+            string[] files = project.Files.Select(file => file.RepoUrl).ToArray();
+            return new {
+                Pid = project.Pid,
+                Name = project.Name,
+                Description = project.Description,
+                StatusSetId = validStatuses,
+                OwnerUserIds = userIds,
+                Tags = project.Tags,
+                Files = files
+            };
         }
 
 
