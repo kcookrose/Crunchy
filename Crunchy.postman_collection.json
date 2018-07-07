@@ -1,0 +1,284 @@
+{
+	"info": {
+		"_postman_id": "67110925-8b97-4082-9df2-f76bb8e7c60d",
+		"name": "Crunchy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Projects",
+			"description": "Tests against the Crunchy/Projects API",
+			"item": [
+				{
+					"name": "Get All Projects",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Test Create Project\",\n\t\"ownerUserIds\" : [ 1 ],\n\t\"description\" : \"A test of creating a new project\",\n\t\"files\" : [ \"catPics/calico.png\" ],\n\t\"statussetid\" : 1,\n\t\"tags\" : \"test;plzIgnore\"\n\t\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/projects",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Project",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Test Create Project\",\n\t\"ownerUserIds\" : [ 1 ],\n\t\"description\" : \"A test of creating a new project\",\n\t\"files\" : [ \"catPics/calico.png\" ],\n\t\"statussetid\" : 1,\n\t\"tags\" : \"test;plzIgnore\"\n\t\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/projects/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"projects",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Project",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Test Create Project\",\n\t\"ownerUserIds\" : [ 1 ],\n\t\"description\" : \"A test of creating a new project\",\n\t\"files\" : [ \"catPics/calico.png\" ],\n\t\"statussetid\" : 1,\n\t\"tags\" : \"test;plzIgnore\"\n\t\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/projects/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"projects",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Project",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Dev Test Project\",\n\t\"description\" : \"A test of the projects API\",\n\t\"statusSetId\" : 1,\n\t\"ownerUserIds\" : [ 1 ],\n\t\"tags\" : \"test;dev;yolo\",\n\t\"files\" : [\n\t\t\t\"catPics/mojo.png\",\n\t\t\t\"bestPics/beb/bugHunter.jpg\"\n\t\t]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/projects",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Project",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Dev Test Project\",\n\t\"description\" : \"A test of the projects API\",\n\t\"statusSetId\" : 1,\n\t\"ownerUserIds\" : [ 1 ],\n\t\"tags\" : \"test;dev;yolo\",\n\t\"files\" : [\n\t\t\t\"catPics/mojo.png\",\n\t\t\t\"bestPics/beb/bugHunter.jpg\"\n\t\t]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/projects/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"projects",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "StatusSets",
+			"description": null,
+			"item": []
+		},
+		{
+			"name": "Users",
+			"description": null,
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/users/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/users/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Dev Test User\",\n\t\"defaultProjectId\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/users/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reseed Database",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\" : \"Frederick\",\n\t\"defaultProjectId\" : -1\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/dev/resetdb",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"dev",
+						"resetdb"
+					]
+				},
+				"description": "Seed Dev Database"
+			},
+			"response": []
+		}
+	]
+}
