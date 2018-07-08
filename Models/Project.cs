@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-// TODO: Add Project/Owneruser join table
-
 namespace Crunchy.Models {
     public class Project {
 
