@@ -45,7 +45,7 @@ namespace Crunchy.Services {
                     ProjectOwner.Join(context, newProj, newOwner);
                 context.ChangeTracker.TrackGraph(newProj, (node => node.Entry.State = node.Entry.IsKeySet ? EntityState.Unchanged : EntityState.Added));
                 context.SaveChanges();
-                return CreatedAtRoute("GetProject", new { id = newProj.Pid}, newProj); // FIXME: Doesn't give correct response data
+                return CreatedAtRoute("GetProject", new { id = newProj.Pid}, GetDetailedModel(context, newProj)); // FIXME: Doesn't give correct response data
             }
         }
 
@@ -88,8 +88,8 @@ namespace Crunchy.Services {
         public IActionResult DeleteProject(long pId) {
             using (var context = new TodoContext()) {
                 Project oldProj = context.Projects.Find(pId);
-                context.EnsureDeepLoaded(context.Entry(oldProj));
                 if (oldProj == null) return NotFound();
+                context.EnsureDeepLoaded(context.Entry(oldProj));
                 foreach (var file in oldProj.Files) // FIXME: Doesn't trigger physical deletion
                     context.FileRefs.Remove(file);
                 for (int i = oldProj.OwnerUsers.Count-1; i >= 0; i--)
