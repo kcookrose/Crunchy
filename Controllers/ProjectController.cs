@@ -39,10 +39,11 @@ namespace Crunchy.Controllers {
         /// </summary>
         /// <param name="userId">The ID of the user to query</param>
         /// <returns>The set of projects with the specified user as an owner</returns>
-        [HttpGet("byUser/{userId}")]
-        public IActionResult GetProjectByUser(long userId,
-                [FromQuery(Name="includeunowned")]bool includeUnowned)
-            => ProjectService.GetProjectByUser(userId, includeUnowned);
+        /// TODO: Re-add interface
+        //[HttpGet("byUser/{userId}")]
+        //public IActionResult GetProjectByUser(long userId,
+        //        [FromQuery(Name="includeunowned")]bool includeUnowned)
+        //    => ProjectService.GetProjectByUser(userId, includeUnowned);
 
         
         [HttpPost]

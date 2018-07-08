@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,14 +33,22 @@ namespace Crunchy.Models {
         /// The set of statuses that may be applied to todo items assigned to
         /// this project. If empty, all statuses should be assumed valid.
         /// </summary>
+        [ForeignKey("StatusSetId")]
         public StatusSet ValidStatuses { get; set; }
+
+
+        /// <summary>
+        /// The ID of the valid status set.
+        /// </summary>
+        public long StatusSetId { get; set; }
 
 
         /// <summary>
         /// The set of users with visibility to the project. If empty,
         /// all users are assumed to have visibility.
         /// </summary>
-        public IList<User> OwnerUsers { get; set; }
+        // public IList<User> OwnerUsers { get; set; }
+        public IList<ProjectOwner> OwnerUsers { get; set; }
 
 
         /// <summary>
@@ -55,12 +64,15 @@ namespace Crunchy.Models {
 
 
         public Project() {
-            OwnerUsers = new List<User>();
+            // OwnerUsers = new List<User>();
             Files = new List<FileRef>();
         }
 
         public static void OnModelCreating(TodoContext context, ModelBuilder builder) {
-            builder.Entity<Project>().HasMany(prj => prj.Files).WithOne();
+            builder.Entity<Project>()
+                .HasMany(prj => prj.Files)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
         }
         
     }

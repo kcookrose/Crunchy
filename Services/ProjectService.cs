@@ -34,27 +34,15 @@ namespace Crunchy.Services {
         }
 
 
-        public IActionResult GetProjectByUser(long userId, bool includeUnowned) {
-            using (var context = new TodoContext()) {
-                var filteredProjects = context.Projects
-                    .Where(project => project.OwnerUsers.Count == 0 ||
-                        project.OwnerUsers.Any(user => user.Uid == userId));
-                var formattedProjects = filteredProjects
-                    .Select(project => GetShortModel(context, project))
-                    .ToArray();
-                if (formattedProjects.Length > 0)
-                    return Ok(formattedProjects);
-            }
-            return NotFound();
-        }
-
-
         public IActionResult CreateProject(string projectJson) {
-            Project newProj = ProjectFromJson(projectJson);
-            if (newProj == null) return BadRequest();
+            Tuple<Project, IList<User>> newProjTup = ProjectFromJson(projectJson);
+            if (newProjTup == null) return BadRequest();
+            Project newProj = newProjTup.Item1;
             using (var context = new TodoContext()) {
                 foreach (var file in newProj.Files)
                     context.FileRefs.Add(file);
+                foreach (var newOwner in newProjTup.Item2)
+                    ProjectOwner.Join(context, newProj, newOwner);
                 context.ChangeTracker.TrackGraph(newProj, (node => node.Entry.State = node.Entry.IsKeySet ? EntityState.Unchanged : EntityState.Added));
                 context.SaveChanges();
                 return CreatedAtRoute("GetProject", new { id = newProj.Pid}, newProj); // FIXME: Doesn't give correct response data
@@ -63,8 +51,9 @@ namespace Crunchy.Services {
 
 
         public IActionResult UpdateProject(long pId, string projectJson) {
-            Project newProj = ProjectFromJson(projectJson);
-            if (newProj == null) return BadRequest();
+            Tuple<Project, IList<User>> newProjTup = ProjectFromJson(projectJson);
+            if (newProjTup == null) return BadRequest();
+            Project newProj = newProjTup.Item1;
             using (var context = new TodoContext()) {
                 Project oldProj = context.Projects.Find(pId);
                 if (oldProj == null) return NotFound();
@@ -73,7 +62,9 @@ namespace Crunchy.Services {
                 foreach (var file in oldProj.Files)
                     context.FileRefs.Remove(file);
                 oldProj.Files.Clear();
-                oldProj.OwnerUsers.Clear();
+
+                foreach (var projOwner in oldProj.OwnerUsers)
+                    projOwner.Unjoin(context);
 
                 oldProj.Name = newProj.Name;
                 oldProj.Description = newProj.Description;
@@ -81,8 +72,8 @@ namespace Crunchy.Services {
                     oldProj.ValidStatuses = context.StatusSets.Find(newProj.ValidStatuses.Id);
                 else
                     oldProj.ValidStatuses = null;
-                foreach (var user in newProj.OwnerUsers) // TODO: Test without explicit visiting
-                    oldProj.OwnerUsers.Add(context.Users.Find(user.Uid));
+                foreach (var newOwner in newProjTup.Item2)
+                    ProjectOwner.Join(context, oldProj, newOwner);
                 oldProj.Tags = newProj.Tags;
                 foreach (var file in newProj.Files) {
                     context.FileRefs.Add(file);
@@ -97,9 +88,13 @@ namespace Crunchy.Services {
         public IActionResult DeleteProject(long pId) {
             using (var context = new TodoContext()) {
                 Project oldProj = context.Projects.Find(pId);
+                context.EnsureDeepLoaded(context.Entry(oldProj));
                 if (oldProj == null) return NotFound();
                 foreach (var file in oldProj.Files) // FIXME: Doesn't trigger physical deletion
                     context.FileRefs.Remove(file);
+                for (int i = oldProj.OwnerUsers.Count-1; i >= 0; i--)
+                    oldProj.OwnerUsers[i].Unjoin(context);
+                oldProj.Files.Clear();
                 context.Projects.Remove(oldProj);
                 context.SaveChanges();
                 return NoContent();
@@ -115,7 +110,7 @@ namespace Crunchy.Services {
         public object GetShortModel(TodoContext context, Project project) {
             var entry = context.Entry(project);
             context.EnsureDeepLoaded(entry);
-            long[] userIds = project.OwnerUsers.Select(owner => owner.Uid).ToArray();
+            long[] userIds = project.OwnerUsers.Select(owner => owner.UserId).ToArray();
             return new {
                 Pid = project.Pid,
                 Name = project.Name,
@@ -136,7 +131,7 @@ namespace Crunchy.Services {
             long validStatuses = -1;
             if (project.ValidStatuses != null)
                 validStatuses = project.ValidStatuses.Id;
-            long[] userIds = project.OwnerUsers.Select(owner => owner.Uid).ToArray();
+            long[] userIds = project.OwnerUsers.Select(owner => owner.UserId).ToArray();
             string[] files = project.Files.Select(file => file.RepoUrl).ToArray();
             return new {
                 Pid = project.Pid,
@@ -150,7 +145,7 @@ namespace Crunchy.Services {
         }
 
 
-        public Project ProjectFromJson(string projectJson) {
+        public Tuple<Project, IList<User>> ProjectFromJson(string projectJson) {
             var newProj = new {
                 Pid = -1L,
                 Name = "",
@@ -189,16 +184,16 @@ namespace Crunchy.Services {
                 res.Name = newProj.Name;
                 res.Description = newProj.Description;
                 res.ValidStatuses = context.StatusSets.Find(newProj.StatusSetId);
-                res.OwnerUsers = new List<User>();
-                foreach (var userId in newProj.OwnerUserIds) {
-                    res.OwnerUsers.Add(context.Users.Find(userId));
-                }
+                //res.OwnerUsers = new List<ProjectOwner>();
+                IList<User> owners = newProj.OwnerUserIds
+                    .Select(newUser => context.Users.Find(newUser))
+                    .ToArray();
                 res.Tags = newProj.Tags;
                 res.Files = new List<FileRef>();
                 foreach (var file in newProj.Files) {
                     res.Files.Add(new FileRef(file));
                 }
-                return res;
+                return Tuple.Create<Project, IList<User>>(res, owners);
             }
         }
     }

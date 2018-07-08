@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
@@ -21,21 +22,28 @@ namespace Crunchy.Models {
 
 
         /// <summary>
+        /// A list of projects the user owns.
+        /// </summary>
+        public IList<ProjectOwner> OwnedProjects { get; set; }
+
+
+        /// <summary>
         /// A default project to assign tasks to.
         /// </summary>
+        [ForeignKey("DefaultProjectId")]
         public Project DefaultProject { get; set; } 
 
 
         /// <summary>
         /// The id of a default project to assign tasks to.
         /// </summary>
-        [NotMapped]
-        public long DefaultProjectId {
-            get {
-                if (DefaultProject == null)
-                    return -1;
-                return DefaultProject.Pid;
-            }
+        public long? DefaultProjectId { get; set; }
+
+        public static void OnModelCreating(TodoContext context, ModelBuilder builder) {
+            builder.Entity<User>()
+                .HasOne(user => user.DefaultProject)
+                .WithMany()
+                .HasForeignKey(user => user.DefaultProjectId);
         }
     }
 }

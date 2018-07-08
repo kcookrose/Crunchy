@@ -9,7 +9,7 @@ using Crunchy.Services.Interfaces;
 
 namespace Crunchy.Services {
 
-    public class UserService : CrunchyService, IUserService {
+    public class UserService : CrunchyService, IUserService { // TODO: Update to use join table
 
         public IActionResult GetAllUsers() {
             using (var context = new TodoContext()) {

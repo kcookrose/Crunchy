@@ -26,10 +26,11 @@ namespace Crunchy.Models {
 
 
         protected override void OnModelCreating(ModelBuilder builder) {
+            User.OnModelCreating(this, builder);
             TodoItem.OnModelCreating(this, builder);
             FileRef.OnModelCreating(this, builder);
             StatusSet.OnModelCreating(this, builder);
-
+            ProjectOwner.OnModelCreating(this, builder);
         }
 
 
