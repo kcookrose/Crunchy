@@ -35,9 +35,6 @@ namespace Crunchy.Models {
 
 
         public void EnsureDeepLoaded(EntityEntry entry) {
-            foreach (var collection in entry.Collections) {
-                collection.Load();
-            }
             foreach (var navigation in entry.Navigations) {
                 navigation.Load();
             }

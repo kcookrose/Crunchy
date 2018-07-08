@@ -45,7 +45,7 @@ namespace Crunchy.Services {
                     ProjectOwner.Join(context, newProj, newOwner);
                 context.ChangeTracker.TrackGraph(newProj, (node => node.Entry.State = node.Entry.IsKeySet ? EntityState.Unchanged : EntityState.Added));
                 context.SaveChanges();
-                return CreatedAtRoute("GetProject", new { id = newProj.Pid}, GetDetailedModel(context, newProj)); // FIXME: Doesn't give correct response data
+                return CreatedAtRoute("GetProject", new { id = newProj.Pid}, GetDetailedModel(context, newProj));
             }
         }
 

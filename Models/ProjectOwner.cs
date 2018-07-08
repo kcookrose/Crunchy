@@ -38,8 +38,6 @@ namespace Crunchy.Models {
         public static void Join(TodoContext context, Project project, User user) {
             var joined = new ProjectOwner { Project = project, User = user };
             context.ChangeTracker.TrackGraph(joined, (node => node.Entry.State = node.Entry.IsKeySet ? EntityState.Unchanged : EntityState.Added));
-            project.OwnerUsers.Add(joined);
-            user.OwnedProjects.Add(joined);
         }
 
 
