@@ -17,8 +17,8 @@ namespace Crunchy.Services {
             Write("INF", message);
         }
 
-        public void User(string message) {
-            Write("USR", message);
+        public void Client(string message) {
+            Write("CLI", message);
         }
 
         public void Write(string msgType, string message) {
