@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "67110925-8b97-4082-9df2-f76bb8e7c60d",
+		"_postman_id": "accbf61a-1bea-4b50-a4e9-70ce7765ee79",
 		"name": "Crunchy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9,35 +9,6 @@
 			"name": "Projects",
 			"description": "Tests against the Crunchy/Projects API",
 			"item": [
-				{
-					"name": "Get All Projects",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Test Create Project\",\n\t\"ownerUserIds\" : [ 1 ],\n\t\"description\" : \"A test of creating a new project\",\n\t\"files\" : [ \"catPics/calico.png\" ],\n\t\"statussetid\" : 1,\n\t\"tags\" : \"test;plzIgnore\"\n\t\n}"
-						},
-						"url": {
-							"raw": "http://localhost:5000/api/projects",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"projects"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "Get Project",
 					"request": {
@@ -156,18 +127,72 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get All Projects",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Test Create Project\",\n\t\"ownerUserIds\" : [ 1 ],\n\t\"description\" : \"A test of creating a new project\",\n\t\"files\" : [ \"catPics/calico.png\" ],\n\t\"statussetid\" : 1,\n\t\"tags\" : \"test;plzIgnore\"\n\t\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/projects",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"projects"
+							]
+						}
+					},
+					"response": []
 				}
 			]
-		},
-		{
-			"name": "StatusSets",
-			"description": null,
-			"item": []
 		},
 		{
 			"name": "Users",
 			"description": null,
 			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Dev User\",\n\t\"defaultProjectId\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/users/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Get All Users",
 					"request": {
@@ -217,9 +242,64 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "TodoItems",
+			"description": null,
+			"item": [
+				{
+					"name": "Get All TodoItems",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/todoitems",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"todoitems"
+							]
+						}
+					},
+					"response": []
 				},
 				{
-					"name": "Create User",
+					"name": "Get TodoItem",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/todoitems/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"todoitems",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create TodoItem",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -230,10 +310,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Dev Test User\",\n\t\"defaultProjectId\": 1\n}"
+							"raw": "{\n\t\"name\" : \"New Dev Task\",\n\t\"tags\" : \"dev;test\",\n\t\"projectId\" : 1,\n\t\"assigneeId\" : 1,\n\t\"requiredItemIds\" : [\n\t\t1,\n\t\t2\n\t\t],\n\t\"startDateTime\" : null,\n\t\"statusId\" : 1,\n\t\"ownerTodoItemId\" : 1\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/users/",
+							"raw": "http://localhost:5000/api/todoitems",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -241,8 +321,37 @@
 							"port": "5000",
 							"path": [
 								"api",
-								"users",
-								""
+								"todoitems"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "StatusSets",
+			"description": null,
+			"item": [
+				{
+					"name": "Get All StatusSets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/statussets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"statussets"
 							]
 						}
 					},
