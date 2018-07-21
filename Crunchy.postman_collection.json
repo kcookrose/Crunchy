@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "accbf61a-1bea-4b50-a4e9-70ce7765ee79",
+		"_postman_id": "0fa055fb-726b-4860-9abb-2f6a1484967e",
 		"name": "Crunchy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -310,7 +310,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"New Dev Task\",\n\t\"tags\" : \"dev;test\",\n\t\"projectId\" : 1,\n\t\"assigneeId\" : 1,\n\t\"requiredItemIds\" : [\n\t\t1,\n\t\t2\n\t\t],\n\t\"startDateTime\" : null,\n\t\"statusId\" : 1,\n\t\"ownerTodoItemId\" : 1\n}"
+							"raw": "{\n\t\"name\" : \"New Dev Task\",\n\t\"tags\" : \"dev;test\",\n\t\"projectId\" : 1,\n\t\"assigneeId\" : 1,\n\t\"requiredItemIds\" : [\n\t\t1\n\t\t],\n\t\"startDateTime\" : null,\n\t\"statusId\" : 1,\n\t\"ownerTodoItemId\" : 1\n}"
 						},
 						"url": {
 							"raw": "http://localhost:5000/api/todoitems",
@@ -322,6 +322,36 @@
 							"path": [
 								"api",
 								"todoitems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update TodoItem",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"New Dev Task Updated\",\n\t\"tags\" : \"dev;test;updated\",\n\t\"projectId\" : 1,\n\t\"assigneeId\" : 1,\n\t\"requiredItemIds\" : [\n\t\t1\n\t\t],\n\t\"startDateTime\" : null,\n\t\"statusId\" : 1,\n\t\"ownerTodoItemId\" : 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/todoitems/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"todoitems",
+								"2"
 							]
 						}
 					},
