@@ -50,12 +50,7 @@ namespace Crunchy.Services {
             using (var context = new TodoContext()) {
                 TodoItem newItem = TodoItemFromJson(context, json);
                 if (newItem == null) return BadRequest();
-                if (newItem.Project != null)
-                    newItem.Project = context.Projects.Find(newItem.Project.Pid);
-                context.ChangeTracker.TrackGraph(newItem, node => {
-                    Log.DevInfo(JsonConvert.SerializeObject(node.Entry.Entity, Formatting.Indented));
-                    node.Entry.State = (node.Entry.IsKeySet ? EntityState.Unchanged : EntityState.Added);
-                });
+                context.ChangeTracker.TrackGraph(newItem, node => node.Entry.State = (node.Entry.IsKeySet ? EntityState.Unchanged : EntityState.Added));
                 try {
                     context.SaveChanges();
                 } catch (DbUpdateException exOutter) {
@@ -65,6 +60,36 @@ namespace Crunchy.Services {
                 }
                 Log.Client("Success");
                 return CreatedAtRoute("GetTodoItem", new { id = newItem.Tid }, GetDetailedModel(context, newItem));
+            }
+        }
+
+
+        public IActionResult UpdateTodoItem(long id, string json) {
+            Log.Client("Update TodoItem with ID: " + id);
+            using (var context = new TodoContext()) {
+                TodoItem newItem = TodoItemFromJson(context, json);
+                if (newItem == null) return BadRequest();
+                TodoItem oldItem = context.TodoItems.Find(id);
+                if (oldItem == null) return BadRequest();
+                oldItem.Name = newItem.Name;
+                oldItem.AssigneeId = newItem.AssigneeId;
+                oldItem.Assignee = newItem.Assignee;                    
+                oldItem.DueDateTime = newItem.DueDateTime;
+                oldItem.EstimatedTime = newItem.EstimatedTime;
+                oldItem.OwnerTodoItem = newItem.OwnerTodoItem;
+                oldItem.OwnerTodoItemId = newItem.OwnerTodoItemId;
+                oldItem.Project = newItem.Project;
+                oldItem.ProjectId = newItem.ProjectId;
+                oldItem.RequiredItems.Clear();
+                foreach (var reqItem in newItem.RequiredItems)
+                    oldItem.RequiredItems.Add(reqItem);
+                oldItem.StartDateTime = newItem.StartDateTime;
+                oldItem.Status = newItem.Status;
+                oldItem.StatusId = newItem.StatusId;
+                oldItem.Tags = newItem.Tags;
+                Log.Client("Success");
+                context.SaveChanges();
+                return NoContent();
             }
         }
 
@@ -92,7 +117,6 @@ namespace Crunchy.Services {
             TodoItem res = new TodoItem();
             res.Tid = parsedTodoItem.Tid;
             res.Name = parsedTodoItem.Name;
-            Log.DevInfo(res.Tid.ToString());
             if (String.IsNullOrEmpty(res.Name)) {
                 Log.Client("Empty name");
                 return null;

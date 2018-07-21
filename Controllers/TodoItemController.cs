@@ -49,6 +49,20 @@ namespace Crunchy.Controllers {
 
 
         /// <summary>
+        /// Update an existing Todo Item.
+        /// </summary>
+        /// <param name="id">The id of the Todo Item to update</param>
+        /// <returns>The updated Todo Item, if succesful</returns>
+        [HttpPut("{id}")]
+        public IActionResult UpdateTodoItem(long id) {
+            using (var reader = new StreamReader(Request.Body)) {
+                string json = reader.ReadToEnd();
+                return TodoItemService.UpdateTodoItem(id, json);
+            }
+        } 
+
+
+        /// <summary>
         /// Get a set of todo items visible by the specified user
         /// </summary>
         /// <param name="userId">The ID of the user</param>

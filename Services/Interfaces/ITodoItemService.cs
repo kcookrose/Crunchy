@@ -13,6 +13,8 @@ namespace Crunchy.Services.Interfaces {
 
         IActionResult CreateTodoItem(string json);
 
+        IActionResult UpdateTodoItem(long id, string json);
+
         //IActionResult GetTodoItemByUser(long userId, bool includeUnowned);
 
     }
