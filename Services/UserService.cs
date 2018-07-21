@@ -84,7 +84,7 @@ namespace Crunchy.Services {
             try {
                 newUserObj = JsonConvert.DeserializeAnonymousType(json, newUserObj);
             } catch (JsonReaderException) {
-                System.Console.WriteLine("Failed to parse json: " + json);
+                System.Console.WriteLine("Failed to parse json: " + json); // TODO: Change to logger
                 return null;
             }
             if (String.IsNullOrEmpty(newUserObj.Name) ||
@@ -94,8 +94,10 @@ namespace Crunchy.Services {
                 User newUser = new User();
                 newUser.Name = newUserObj.Name;
                 Project project = context.Projects.Find(newUserObj.DefaultProjectId);
-                if (project != null)
+                if (project != null) {
                     newUser.DefaultProject = project;
+                    newUser.DefaultProjectId = project.Pid;
+                }
                 return newUser;
             }
         }
