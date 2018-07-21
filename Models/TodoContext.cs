@@ -48,7 +48,7 @@ namespace Crunchy.Models {
                 DevSeedUser();
             if (Projects.Count() == 0)
                 DevSeedProject();
-            if (TodoItems.Count() == 0)
+            if (TodoItems.Count() == 0 || true)
                 DevSeedTodoItem();
         }
 
@@ -76,6 +76,18 @@ namespace Crunchy.Models {
         /// [Dev] Seed the Todo table with an item.
         /// </summary>
         public void DevSeedTodoItem() {
+            while (TodoItems.Any()) TodoItems.Remove(TodoItems.First());
+            TodoItem newItem = new TodoItem();
+            newItem.Name = "Do The Thing";
+            Project proj = Projects.First();
+            newItem.Project = proj;
+            StatusSet statusSet = proj.ValidStatuses;
+            newItem.Status = statusSet.Statuses[0];
+            ChangeTracker.TrackGraph(newItem, node => node.Entry.State = node.Entry.IsKeySet ? EntityState.Unchanged : EntityState.Added);
+            SaveChanges();
+
+
+            /*
             var newFile = new FileRef("test/file.jpg");
 
             var user = Users.FirstOrDefault();
@@ -96,7 +108,7 @@ namespace Crunchy.Models {
             if (user != null) initItem.Assignee = user;
             else System.Console.WriteLine("NULL USER");
             TodoItems.Add(initItem);
-            SaveChanges();
+            SaveChanges();*/
         }
 
 

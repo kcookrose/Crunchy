@@ -11,8 +11,9 @@ namespace Crunchy.Services.Interfaces {
 
         IActionResult GetTodoItem(long id);
 
-        IActionResult GetTodoItemByUser(long userId, bool includeUnowned);
+        IActionResult CreateTodoItem(string json);
 
-        //Task<IActionResult> GetAllTodoItemsAsync();
+        //IActionResult GetTodoItemByUser(long userId, bool includeUnowned);
+
     }
 }

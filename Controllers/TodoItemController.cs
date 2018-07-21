@@ -1,3 +1,5 @@
+using System.IO;
+
 using Microsoft.AspNetCore.Mvc;
 
 using Crunchy.Services.Interfaces;
@@ -28,9 +30,22 @@ namespace Crunchy.Controllers {
         /// </summary>
         /// <param name="id">The ID of the desired todoitem</param>
         /// <returns>The requested todo item</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name="GetTodoItem")]
         public IActionResult GetTodoItem(long id)
             => TodoItemService.GetTodoItem(id);
+
+        
+        /// <summary>
+        /// Create a new Todo Item.
+        /// </summary>
+        /// <returns>The created Todo Item, if successful</returns>
+        [HttpPost]
+        public IActionResult CreateTodoItem() {
+            using (var stream = new StreamReader(Request.Body)) {
+                string json = stream.ReadToEnd();
+                return TodoItemService.CreateTodoItem(json);
+            }
+        }
 
 
         /// <summary>
@@ -38,9 +53,9 @@ namespace Crunchy.Controllers {
         /// </summary>
         /// <param name="userId">The ID of the user</param>
         /// <returns>A set of visible todo items</returns>
-        [HttpGet("byuser/{userId}")]
+        /*[HttpGet("byuser/{userId}")]
         public IActionResult GetTodoItemByUser(long userId,
                 [FromQuery(Name="includeunowned")]bool includeUnowned)
-            => TodoItemService.GetTodoItemByUser(userId, includeUnowned);
+            => TodoItemService.GetTodoItemByUser(userId, includeUnowned);*/
     }
 }

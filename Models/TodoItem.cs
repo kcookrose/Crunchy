@@ -68,78 +68,55 @@ namespace Crunchy.Models {
         /// <summary>
         /// When part of a task group, this will be the owning task.
         /// </summary>
+        [ForeignKey("OwnerTodoItemId")]
         public TodoItem OwnerTodoItem { get; set; }
 
 
         /// <summary>
         /// The ID of the owning todo item, of -1 if none.
         /// </summary>
-        [NotMapped]
-        public long OwnerTodoItemId {
-            get {
-                if (OwnerTodoItem != null)
-                    return OwnerTodoItem.Tid;
-                return -1;
-            }
-        }
+        public long? OwnerTodoItemId { get; set; }
 
 
         /// <summary>
         /// The project the task belongs to.
         /// </summary>
         [Required]
+        [ForeignKey("ProjectId")]
         public Project Project { get; set; }
 
 
         /// <summary>
         /// The ID of the project the item belongs to.
         /// </summary>
-        [NotMapped]
-        public long ProjectId {
-            get {
-                if (Project != null)
-                    return Project.Pid;
-                return -1;
-            }
-        }
+        public long ProjectId { get; set; }
 
 
         /// <summary>
         /// The current status of the task.
         /// </summary>
         [Required]
+        [ForeignKey("StatusId")]
         public Status Status { get; set; }
 
 
         /// <summary>
         /// The ID of the current status
         /// </summary>
-        [NotMapped]
-        public long StatusId {
-            get {
-                if (Status == null)
-                    return -1;
-                return Status.Sid;
-            }
-        }
+        public long StatusId { get; set; }
 
 
         /// <summary>
         /// The user the task is assigned to.
         /// </summary>
+        [ForeignKey("AssigneeId")]
         public User Assignee { get; set; }
 
 
         /// <summary>
         /// The ID of the assignee or -1 if unassigned
         /// </summary>
-        [NotMapped]
-        public long AssigneeId {
-            get {
-                if (Assignee != null) return Assignee.Uid;
-                return -1;
-            }
-        }
+        public long? AssigneeId { get; set; }
 
 
         /// <summary>
@@ -180,8 +157,12 @@ namespace Crunchy.Models {
         /// <param name="builder">The model builder.</param>
         public static void OnModelCreating(TodoContext context,
                 ModelBuilder builder) {
-            builder.Entity<TodoItem>().HasMany(ent => ent.Files).WithOne();
-            builder.Entity<TodoItem>().HasOne(ent => ent.Project).WithMany();
+            var entity = builder.Entity<TodoItem>();
+            entity.HasMany(ent => ent.Files)
+                .WithOne();
+            entity.HasOne(ent => ent.Project)
+                .WithMany()
+                .HasForeignKey(todo => todo.ProjectId);
 
         }
         
